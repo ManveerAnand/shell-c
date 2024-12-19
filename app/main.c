@@ -12,6 +12,6 @@ int main() {
   char input[100];
   fgets(input, 100, stdin);
   input[strcspn(input, "\n")] = '\0'; //remove the trailing newline character
-  printf("Invalid command: %s not found",input);
+  printf("%s: command not found",input);
   return 0;
 }
