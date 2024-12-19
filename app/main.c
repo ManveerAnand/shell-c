@@ -6,12 +6,13 @@ int main() {
   setbuf(stdout, NULL);
 
   // Uncomment this block to pass the first stage
-  printf("$ ");
 
   // Wait for user input
+  while(1){
+  printf("$ ");
   char input[100];
   fgets(input, 100, stdin);
   input[strcspn(input, "\n")] = '\0'; //remove the trailing newline character
-  printf("%s: command not found",input);
-  return 0;
+  printf("%s: command not found\n",input);
+}
 }
