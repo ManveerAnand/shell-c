@@ -36,7 +36,7 @@ int main() {
   setbuf(stdout, NULL);
   
   char *path = getenv("PATH");
-  char *directory = "idk";
+  char *directory = strtok(path, ":");
 
   while(1){
 
