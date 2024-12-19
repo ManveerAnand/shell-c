@@ -56,9 +56,11 @@ int main() {
       comcheck[strlen(input)-4]=  '\0';
       // printf("%s\n",comcheck);
       if(get_command(comcheck) != -1){
-        printf("%sis a shell builtin\n",comcheck);
+        comcheck[strlen(input)-5] =  '\0';
+        printf("%s is a shell builtin\n",comcheck);
       }
       else{
+        comcheck[strlen(input)-5] =  '\0';
         printf("%s: command not found\n",comcheck);
       }
       break;
