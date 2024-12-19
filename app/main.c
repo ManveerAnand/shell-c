@@ -36,10 +36,13 @@ int main() {
   setbuf(stdout, NULL);
   
   char *path = getenv("PATH");
-  char *directory = strtok(path, ":");
+  char *abs = malloc(strlen(path) + 1);
+  strcpy(abs, path);
+
 
   while(1){
-
+  strcpy(path, abs);
+  char *directory = strtok(path, ":");
   printf("$ ");
   char input[100];
   fgets(input, 100, stdin);
@@ -47,9 +50,11 @@ int main() {
   int command = get_command(input);
   
   //for type command
-  char filename[100];
+  char filename[100] = "";
+  char filepath[100] = "";
   bool found = false;
-
+  int size = 100;
+  char fullpath[1024];
 
 
 //different commands logic
@@ -63,18 +68,39 @@ int main() {
       break;
     
     case TYPE:
-      snprintf(filename,100,"%.*s",strlen(input)-5,input+5);
+      snprintf(filename,100,"%.*s",strlen(input)-5,input+5); // extract filename
+      // printf("filenamesize:%d\n",strlen(filename));
+      filename[strlen(filename)] = ' ';
+      if(get_command(filename)!=-1)
+      {
+        printf("%sis a shell builtin\n",filename);
+      }
+      else{
+      filename[strlen(filename)-1] = '\0'; 
+      // printf("filenamesize:%d\n",strlen(filename));
+
       while(directory != NULL) 
       {
-        directory = strtok(NULL, ":");
-        if (access(directory, F_OK) == 0) {
-          printf("%s is %s\n", filename, directory);
+        snprintf(filepath,100,"%s/%s",directory,filename);  
+        // printf("%s\n",filepath);
+        if (access(filepath, F_OK) == 0) {
           found = true;
-          break;
+          if(size>=strlen(directory))
+          {
+            size = strlen(directory);
+            snprintf(fullpath,1024,"%s",filepath);
+            
+          }
         }
+        directory = strtok(NULL, ":");
       }
       if(!found)
-        printf("%s: not found\n",input);
+        printf("%s: not found\n",filename);
+      else{
+          printf("%s is %s\n", filename, fullpath);
+          }
+      }
+
       break;
       
       default:
