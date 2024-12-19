@@ -1,24 +1,44 @@
 #include <stdio.h>
 #include <string.h>
 
+
+int get_command(char* input)
+{
+  if(strcmp("exit 0",input)==0){
+    return 0;
+  }
+
+  char c[6] ;
+  snprintf(c,100,"%.*s",5,input);
+  if(strcmp("echo ",c)==0){
+    return 1;
+  }
+  return -1;
+}
+
 int main() {
-  // Flush after every printf 
+  
   setbuf(stdout, NULL);
 
-  // Uncomment this block to pass the first stage
-
-  // Wait for user input
   while(1){
   printf("$ ");
+  
   char input[100];
   fgets(input, 100, stdin);
   input[strcspn(input, "\n")] = '\0'; //remove the trailing newline character
-  
-  if(!strcmp(input,"exit 0")){
-    return 0;
-  }
-  // printf("%d",strcmp(input,"exit 0"));
-  printf("%s: command not found\n",input);
+  int command = get_command(input);
 
+  
+  switch(command){
+    case 0:
+      return 0;
+    case 1:
+      printf("%.*s\n",strlen(input)-5,input+5);
+      break;
+      default:
+      printf("%s: command not found\n",input);  
+      }
+    }
 }
-}
+
+
