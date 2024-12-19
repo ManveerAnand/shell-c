@@ -36,7 +36,7 @@ int main() {
   setbuf(stdout, NULL);
   
   char *path = getenv("PATH");
-  char *directory = strtok(path, ":");
+  char *directory = "idk";
 
   while(1){
 
@@ -66,12 +66,12 @@ int main() {
       snprintf(filename,100,"%.*s",strlen(input)-5,input+5);
       while(directory != NULL) 
       {
+        directory = strtok(NULL, ":");
         if (access(directory, F_OK) == 0) {
           printf("%s is %s\n", filename, directory);
           found = true;
           break;
         }
-        directory = strtok(NULL, ":");
       }
       if(!found)
         printf("%s: not found\n",input);
