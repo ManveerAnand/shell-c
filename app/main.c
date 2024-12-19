@@ -61,7 +61,7 @@ int main() {
       }
       else{
         comcheck[strlen(input)-5] =  '\0';
-        printf("%s: command not found\n",comcheck);
+        printf("%s: not found\n",comcheck);
       }
       break;
       
