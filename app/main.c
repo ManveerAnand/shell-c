@@ -13,6 +13,12 @@ int main() {
   char input[100];
   fgets(input, 100, stdin);
   input[strcspn(input, "\n")] = '\0'; //remove the trailing newline character
+  
+  if(!strcmp(input,"exit 0")){
+    return 0;
+  }
+  // printf("%d",strcmp(input,"exit 0"));
   printf("%s: command not found\n",input);
+
 }
 }
