@@ -146,6 +146,9 @@ int main()
       break;
 
     case CD:
+        if(strcmp(args, "~") == 0) {
+            chdir(getenv("HOME"));
+        } else
         if (chdir(args) != 0) {
         fprintf(stderr, "cd: %s: ", args);
         perror("");
