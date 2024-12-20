@@ -38,6 +38,12 @@ int get_command(char *input)
   {
     return PWD;
   }
+
+  if (strcmp("cd", c) == 0)
+  {
+    return CD;
+  }
+
   return -1;
 }
 
@@ -139,6 +145,13 @@ int main()
       printf("%s\n", cwd);
       break;
 
+    case CD:
+        if (chdir(args) != 0) {
+        fprintf(stderr, "cd: %s: ", args);
+        perror("");
+}
+
+      break;
     default:
       if (isValid(path, command))
       {
