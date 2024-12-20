@@ -5,13 +5,14 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 
 enum commands{
   EXIT,
   ECHO,
   TYPE,
-  EXEC
+  PWD
 };
 
 
@@ -19,7 +20,8 @@ int get_command(char* input)
 {
   char c[6] ;
   snprintf(c,100,"%.*s",5,input);
-  
+  // char *command = strtok(input, " ");
+
   if(strcmp("exit ",c)==0){
     return EXIT;
   }
@@ -31,7 +33,11 @@ int get_command(char* input)
   if(strcmp("type ",c) == 0){
     return TYPE;
   }
+  if(strcmp("pwd",input) == 0){
+    return PWD;
+  }
   return -1;
+
 }
 
 bool isValid(char* path,char* args)
@@ -122,6 +128,17 @@ int main() {
       }
       break;
       
+      case PWD:
+        char cwd[1024];
+        if (getcwd(cwd, sizeof(cwd)) != NULL) {
+          printf("%s\n", cwd);
+        } else {
+          perror("getcwd() error");
+        }
+        break;
+
+
+
       default:
       command = strtok(input, " ");
       char* args = strtok(NULL, " ");
