@@ -83,19 +83,41 @@ int main()
     char input[100];
     fgets(input, 100, stdin);
     input[strcspn(input, "\n")] = '\0'; // remove the trailing newline character
+    
     char temp[1024];
+    char argstemp[1024] = "";
+    bool isempty = true;
     strcpy(temp, input);
+    
     command = strtok(temp, " ");
     args = strtok(NULL, " ");
-
-    int operation = get_command(input);
+    if(args != NULL)
+    {
+      isempty = false;
+      if((args[0] == '"' || args[0] == '\'')) {
+        snprintf(args,strlen(input) - strlen(command) , "%s", input + strlen(command) + 2 );
+        strcpy(argstemp, args);
+        }
+      else
+      {
+        while ( args != NULL)
+        {
+          strcat(argstemp, args);
+          strcat(argstemp, " ");
+          args = strtok(NULL, " ");
+        }
+        argstemp[strlen(argstemp) - 1] = '\0';
+      }
+    }
+    
+    strcpy(temp, input);
+    int operation = get_command(temp);
     // for type command
     char filepath[100] = "";
     bool found = false;
     int size = 100;
     char fullpath[1024];
     char cwd[1024];
-
 
     switch (operation)
     {
@@ -104,14 +126,11 @@ int main()
       if (input[5] == '0')
         return 0;
 
-    case ECHO:
-      printf("%.*s\n", strlen(input) - 5, input + 5);
-      break;
 
     case TYPE:
-      if (get_command(args) != -1)
+      if (get_command(argstemp) != -1)
       {
-        printf("%s is a shell builtin\n", args);
+        printf("%s is a shell builtin\n", argstemp);
       }
 
       else
@@ -119,7 +138,7 @@ int main()
         char *directory = strtok(abs, ":");
         while (directory != NULL)
         {
-          snprintf(filepath, 100, "%s/%s", directory, args);
+          snprintf(filepath, 100, "%s/%s", directory, argstemp);
           if (access(filepath, F_OK) == 0)
           {
             found = true;
@@ -132,10 +151,10 @@ int main()
           directory = strtok(NULL, ":");
         }
         if (!found)
-          printf("%s: not found\n", args);
+          printf("%s: not found\n", argstemp);
         else
         {
-          printf("%s is %s\n", args, fullpath);
+          printf("%s is %s\n", argstemp, fullpath);
         }
       }
       break;
@@ -146,26 +165,50 @@ int main()
       break;
 
     case CD:
-        if(strcmp(args, "~") == 0) {
+        if(strcmp(argstemp, "~") == 0) {
             chdir(getenv("HOME"));
         } else
-        if (chdir(args) != 0) {
-        fprintf(stderr, "cd: %s: ", args);
+        if (chdir(argstemp) != 0) {
+        fprintf(stderr, "cd: %s: ", argstemp);
         perror("");
 }
+    break;
 
+    case ECHO:
+      token = strtok(argstemp, "'");
+      printf("%s\n", token);
       break;
+    
     default:
-      if (isValid(path, command))
+      if (isValid(abs, command))
       {
-        if (fork() == 0)
+        if(isempty)
         {
-          execvp(command, (char *const[]){command, args, NULL});
+          if (fork() == 0)
+          {
+            execvp(command, NULL);
+            perror("execlp failed");
+          }
+          wait(NULL);
         }
         else
         {
-          wait(NULL);
+        token = strtok(argstemp, "'");
+        while (token != NULL) {
+          if(strcmp(token, " ") == 0) {
+          }
+          else
+            if (fork() == 0) {
+                execvp(command, (char *const[]){command, token, NULL});
+                perror("execvp failed");
+            }
+            else{
+              wait(NULL);
+            }
+            token = strtok(NULL, "'");
+          }
         }
+while (wait(NULL) > 0);
       }
       else
       {
